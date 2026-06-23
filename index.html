@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salarios Ciberseguridad LATAM 2026</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --card: #111827;
+      --accent: #00f5a0;
+      --accent2: #00d9f5;
+      --purple: #7c3aed;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --border: #1e2d40;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, #0d1b2a 0%, #1a0533 50%, #0d1b2a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at center, rgba(124,58,237,0.12) 0%, transparent 60%);
+      animation: pulse 6s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    .header-badge {
+      display: inline-block;
+      background: rgba(0,245,160,0.1);
+      border: 1px solid rgba(0,245,160,0.3);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      position: relative;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 900;
+      line-height: 1.15;
+      position: relative;
+    }
+    h1 span.accent { color: var(--accent); }
+    h1 span.accent2 { color: var(--accent2); }
+    .subtitle {
+      margin-top: 0.75rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      position: relative;
+    }
+    .header-meta {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .meta-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* MAIN */
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* SECTION TITLE */
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent2);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* CARDS GRID */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    .job-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .job-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0,245,160,0.3);
+      box-shadow: 0 8px 40px rgba(0,245,160,0.07);
+    }
+    .job-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 16px 16px 0 0;
+    }
+    .card-num {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.02em;
+    }
+    .card-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+      line-height: 1.5;
+    }
+    .salary-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-bottom: 0.75rem;
+    }
+    .salary-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.6rem 0.75rem;
+    }
+    .salary-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+    .salary-label.local { color: #64748b; }
+    .salary-label.remote { color: var(--accent); }
+    .salary-value {
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+    .salary-value.local { color: var(--text); }
+    .salary-value.remote { color: var(--accent); }
+    .cert-badge {
+      display: inline-block;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.35);
+      color: #a78bfa;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+    }
+    .multiplier-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(0,245,160,0.08);
+      border: 1px solid rgba(0,245,160,0.2);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      margin-left: 0.4rem;
+    }
+
+    /* COLORS PER CARD */
+    .c1::before { background: linear-gradient(90deg,#3b82f6,#06b6d4); }
+    .c2::before { background: linear-gradient(90deg,#ef4444,#f97316); }
+    .c3::before { background: linear-gradient(90deg,#10b981,#06b6d4); }
+    .c4::before { background: linear-gradient(90deg,#f59e0b,#ef4444); }
+    .c5::before { background: linear-gradient(90deg,#7c3aed,#ec4899); }
+    .c6::before { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+
+    /* CHARTS */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    .chart-card h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .chart-wrap { position: relative; height: 220px; }
+
+    /* KEY INSIGHTS */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .insight-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+    .insight-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .insight-value {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--accent);
+    }
+    .insight-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+      line-height: 1.4;
+    }
+
+    /* REQUIREMENTS TABLE */
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    thead tr { background: rgba(255,255,255,0.03); }
+    th {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    td {
+      padding: 0.85rem 1rem;
+      border-top: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .tag {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .tag.high { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+    .tag.mid  { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }
+    .tag.low  { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+
+    /* ALERT BOX */
+    .alert {
+      background: rgba(0,245,160,0.05);
+      border: 1px solid rgba(0,245,160,0.2);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .alert-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .alert-text p { font-size: 0.875rem; line-height: 1.7; color: var(--text); }
+    .alert-text strong { color: var(--accent); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      .salary-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">💼 Reporte 2026</div>
+  <h1>
+    <span class="accent2">6 Profesiones de</span><br>
+    <span class="accent">Ciberseguridad</span> en LATAM
+  </h1>
+  <p class="subtitle">Cu\u00e1nto pueden ganar — Mercado local vs Remoto US/EU · Rangos en USD/a\u00f1o</p>
+  <div class="header-meta">
+    <span class="meta-item"><span class="meta-dot" style="background:#64748b"></span>Local LATAM</span>
+    <span class="meta-item"><span class="meta-dot" style="background:#00f5a0"></span>Remoto US/EU</span>
+    <span class="meta-item"><span class="meta-dot" style="background:#a78bfa"></span>Certificaci\u00f3n recomendada</span>
+    <span class="meta-item">\ud83d\udcca Fuentes: ACSMI, ISC2, Glassdoor 2025-2026</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- KEY INSIGHTS -->
+  <div class="section-title">\ud83d\udca1 Datos Clave</div>
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-icon">\ud83d\udcc8</div>
+      <div class="insight-value">4.5x</div>
+      <div class="insight-label">Diferencia m\u00e1xima entre local y remoto (CISO)</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">\ud83c\udf0e</div>
+      <div class="insight-value">$200K+</div>
+      <div class="insight-label">Techo salarial remoto para CISO</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">\ud83d\udd11</div>
+      <div class="insight-value">$12K</div>
+      <div class="insight-label">Piso de entrada como SOC Analyst local</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">\u2601\ufe0f</div>
+      <div class="insight-value">+80K</div>
+      <div class="insight-label">Cloud Security Engineer remoto en alta demanda 2026</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">\ud83e\uddd0</div>
+      <div class="insight-value">Ingl\u00e9s</div>
+      <div class="insight-label">Requisito fundamental para acceder al mercado remoto</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">\ud83c\udfc6</div>
+      <div class="insight-value">OSCP</div>
+      <div class="insight-label">Cert. m\u00e1s valorada para Pentester a nivel internacional</div>
+    </div>
+  </div>
+
+  <!-- JOB CARDS -->
+  <div class="section-title">\ud83d\udee1\ufe0f Roles y Salarios</div>
+  <div class="cards-grid">
+
+    <div class="job-card c1">
+      <div class="card-num">01</div>
+      <div class="card-title">SOC Analyst</div>
+      <div class="card-desc">Monitorea alertas de seguridad en tiempo real. La puerta de entrada al mundo de ciberseguridad.</div>
+      <div class="salary-row">
+        <div class="salary-box">
+          <div class="salary-label local">\ud83c\uddf3 Local LATAM</div>
+          <div class="salary-value local">$12K\u2013$25K</div>
+        </div>
+        <div class="salary-box">
+          <div class="salary-label remote">\ud83c\udf10 Remoto US/EU</div>
+          <div class="salary-value remote">$30K\u2013$55K</div>
+        </div>
+      </div>
+      <span class="cert-badge">Security+</span>
+      <span class="multiplier-tag">\u2191 2.2x remoto</span>
+    </div>
+
+    <div class="job-card c2">
+      <div class="card-num">02</div>
+      <div class="card-title">Pentester</div>
+      <div class="card-desc">Hackea sistemas legalmente para encontrar vulnerabilidades. Alto valor en mercado freelance y agencias.</div>
+      <div class="salary-row">
+        <div class="salary-box">
+          <div class="salary-label local">\ud83c\uddf3 Local LATAM</div>
+          <div class="salary-value local">$18K\u2013$35K</div>
+        </div>
+        <div class="salary-box">
+          <div class="salary-label remote">\ud83c\udf10 Remoto US/EU</div>
+          <div class="salary-value remote">$45K\u2013$80K</div>
+        </div>
+      </div>
+      <span class="cert-badge">OSCP / CEH</span>
+      <span class="multiplier-tag">\u2191 2.3x remoto</span>
+    </div>
+
+    <div class="job-card c3">
+      <div class="card-num">03</div>
+      <div class="card-title">Cloud Security Engineer</div>
+      <div class="card-desc">Protege infra en AWS, Azure, GCP. Alta demanda en 2026, especialmente en empresas SaaS.</div>
+      <div class="salary-row">
+        <div class="salary-box">
+          <div class="salary-label local">\ud83c\uddf3 Local LATAM</div>
+          <div class="salary-value local">$25K\u2013$45K</div>
+        </div>
+        <div class="salary-box">
+          <div class="salary-label remote">\ud83c\udf10 Remoto US/EU</div>
+          <div class="salary-value remote">$60K\u2013$100K</div>
+        </div>
+      </div>
+      <span class="cert-badge">CCSP</span>
+      <span class="multiplier-tag">\u2191 2.4x remoto</span>
+    </div>
+
+    <div class="job-card c4">
+      <div class="card-num">04</div>
+      <div class="card-title">Threat Hunter</div>
+      <div class="card-desc">Busca amenazas activas que pasaron los filtros autom\u00e1ticos. Combina an\u00e1lisis manual y herramientas avanzadas.</div>
+      <div class="salary-row">
+        <div class="salary-box">
+          <div class="salary-label local">\ud83c\uddf3 Local LATAM</div>
+          <div class="salary-value local">$20K\u2013$40K</div>
+        </div>
+        <div class="salary-box">
+          <div class="salary-label remote">\ud83c\udf10 Remoto US/EU</div>
+          <div class="salary-value remote">$50K\u2013$90K</div>
+        </div>
+      </div>
+      <span class="cert-badge">CySA+</span>
+      <span class="multiplier-tag">\u2191 2.5x remoto</span>
+    </div>
+
+    <div class="job-card c5">
+      <div class="card-num">05</div>
+      <div class="card-title">Security Architect</div>
+      <div class="card-desc">Dise\u00f1a la arquitectura de seguridad completa de una organizaci\u00f3n. Requiere experiencia s\u00f3lida y visi\u00f3n estrat\u00e9gica.</div>
+      <div class="salary-row">
+        <div class="salary-box">
+          <div class="salary-label local">\ud83c\uddf3 Local LATAM</div>
+          <div class="salary-value local">$35K\u2013$55K</div>
+        </div>
+        <div class="salary-box">
+          <div class="salary-label remote">\ud83c\udf10 Remoto US/EU</div>
+          <div class="salary-value remote">$70K\u2013$120K</div>
+        </div>
+      </div>
+      <span class="cert-badge">CISSP</span>
+      <span class="multiplier-tag">\u2191 2.2x remoto</span>
+    </div>
+
+    <div class="job-card c6">
+      <div class="card-num">06</div>
+      <div class="card-title">CISO</div>
+      <div class="card-desc">L\u00edder de seguridad. Reporta al CEO/board. M\u00e1xima responsabilidad estrat\u00e9gica y operativa de la organizaci\u00f3n.</div>
+      <div class="salary-row">
+        <div class="salary-box">
+          <div class="salary-label local">\ud83c\uddf3 Local LATAM</div>
+          <div class="salary-value local">$45K\u2013$90K</div>
+        </div>
+        <div class="salary-box">
+          <div class="salary-label remote">\ud83c\udf10 Remoto US/EU</div>
+          <div class="salary-value remote">$100K\u2013$200K+</div>
+        </div>
+      </div>
+      <span class="cert-badge">CISM / CISSP</span>
+      <span class="multiplier-tag">\u2191 2.5x remoto</span>
+    </div>
+
+  </div>
+
+  <!-- CHARTS -->
+  <div class="section-title">\ud83d\udcca Visualizaci\u00f3n Comparativa</div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>Salario Promedio \u2014 Local vs Remoto (USD)</h3>
+      <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Multiplicador Remoto por Rol</h3>
+      <div class="chart-wrap"><canvas id="radarChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Distribuci\u00f3n Salarial Remoto</h3>
+      <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="section-title">\ud83d\udccb Requisitos por Rol</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Rol</th>
+          <th>Ingl\u00e9s</th>
+          <th>Experiencia</th>
+          <th>Demanda 2026</th>
+          <th>Nivel</th>
+          <th>Path recomendado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SOC Analyst</strong></td>
+          <td>B1-B2</td>
+          <td>0-2 a\u00f1os</td>
+          <td>\u2b50\u2b50\u2b50\u2b50</td>
+          <td><span class="tag low">Entry</span></td>
+          <td>Security+ \u2192 CySA+ \u2192 Blue Team</td>
+        </tr>
+        <tr>
+          <td><strong>Pentester</strong></td>
+          <td>B2-C1</td>
+          <td>1-3 a\u00f1os</td>
+          <td>\u2b50\u2b50\u2b50\u2b50\u2b50</td>
+          <td><span class="tag mid">Mid</span></td>
+          <td>CEH \u2192 eJPT \u2192 OSCP \u2192 CRTO</td>
+        </tr>
+        <tr>
+          <td><strong>Cloud Security Eng.</strong></td>
+          <td>B2-C1</td>
+          <td>2-4 a\u00f1os</td>
+          <td>\u2b50\u2b50\u2b50\u2b50\u2b50</td>
+          <td><span class="tag mid">Mid-Senior</span></td>
+          <td>AWS SAA \u2192 AWS Security \u2192 CCSP</td>
+        </tr>
+        <tr>
+          <td><strong>Threat Hunter</strong></td>
+          <td>B2-C1</td>
+          <td>2-4 a\u00f1os</td>
+          <td>\u2b50\u2b50\u2b50\u2b50</td>
+          <td><span class="tag mid">Mid-Senior</span></td>
+          <td>CySA+ \u2192 GCTI \u2192 GCIA</td>
+        </tr>
+        <tr>
+          <td><strong>Security Architect</strong></td>
+          <td>C1</td>
+          <td>5+ a\u00f1os</td>
+          <td>\u2b50\u2b50\u2b50</td>
+          <td><span class="tag high">Senior</span></td>
+          <td>CISSP \u2192 SABSA \u2192 TOGAF Sec.</td>
+        </tr>
+        <tr>
+          <td><strong>CISO</strong></td>
+          <td>C1-C2</td>
+          <td>8+ a\u00f1os</td>
+          <td>\u2b50\u2b50\u2b50</td>
+          <td><span class="tag high">Executive</span></td>
+          <td>CISM \u2192 CRISC \u2192 CISSP \u2192 MBA Sec.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ALERT / NOTA CLAVE -->
+  <div class="alert">
+    <div class="alert-icon">\u26a0\ufe0f</div>
+    <div class="alert-text">
+      <p><strong>Nota importante:</strong> Los rangos remotos aplican con <strong>ingl\u00e9s t\u00e9cnico + experiencia comprobable + certificaciones</strong> (Security+, OSCP, CISSP, etc.). La diferencia entre mercado local y remoto es real y est\u00e1 documentada. El mismo skill puede pagarse muy distinto seg\u00fan d\u00f3nde est\u00e9 el cliente. Estimaciones basadas en fuentes p\u00fablicas 2025\u20132026 (ACSMI, ISC2, Glassdoor). Var\u00edan por pa\u00eds, seniority y certificaciones.</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>Elaborado por <a href="https://github.com/0xvanguard" target="_blank">@0xvanguard</a> &mdash; Datos orientativos USD/a\u00f1o &mdash; Fuentes: ACSMI, ISC2, Glassdoor 2025-2026 &mdash; <a href="https://github.com/0xvanguard/latam-cybersecurity-salaries-2026" target="_blank">Ver repositorio</a></p>
+</footer>
+
+<script>
+  const roles = ['SOC Analyst','Pentester','Cloud Sec.','Threat Hunter','Sec. Architect','CISO'];
+  const localAvg = [18.5, 26.5, 35, 30, 45, 67.5];
+  const remoteAvg = [42.5, 62.5, 80, 70, 95, 150];
+
+  // BAR CHART
+  new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+      labels: roles,
+      datasets: [
+        { label: 'Local LATAM', data: localAvg, backgroundColor: 'rgba(100,116,139,0.7)', borderColor: '#64748b', borderWidth: 1, borderRadius: 6 },
+        { label: 'Remoto US/EU', data: remoteAvg, backgroundColor: 'rgba(0,245,160,0.7)', borderColor: '#00f5a0', borderWidth: 1, borderRadius: 6 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } },
+      scales: {
+        x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { ticks: { color: '#64748b', callback: v => '$'+v+'K' }, grid: { color: 'rgba(255,255,255,0.04)' } }
+      }
+    }
+  });
+
+  // RADAR
+  const multipliers = [2.2, 2.3, 2.4, 2.5, 2.2, 2.5];
+  new Chart(document.getElementById('radarChart'), {
+    type: 'radar',
+    data: {
+      labels: roles,
+      datasets: [{ label: 'Multiplicador', data: multipliers, backgroundColor: 'rgba(0,217,245,0.15)', borderColor: '#00d9f5', pointBackgroundColor: '#00d9f5', pointRadius: 4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } },
+      scales: { r: { min: 1.8, max: 2.7, ticks: { color: '#64748b', font: { size: 9 }, backdropColor: 'transparent' }, grid: { color: 'rgba(255,255,255,0.07)' }, pointLabels: { color: '#94a3b8', font: { size: 10 } } } }
+    }
+  });
+
+  // DONUT
+  new Chart(document.getElementById('donutChart'), {
+    type: 'doughnut',
+    data: {
+      labels: roles,
+      datasets: [{ data: remoteAvg, backgroundColor: ['#3b82f6','#ef4444','#10b981','#f59e0b','#7c3aed','#f59e0b'], borderColor: '#111827', borderWidth: 3 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 12 } } },
+      cutout: '65%'
+    }
+  });
+</script>
+
+</body>
+</html>
